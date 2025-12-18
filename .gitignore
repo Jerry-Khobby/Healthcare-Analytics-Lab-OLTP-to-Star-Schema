@@ -1,0 +1,56 @@
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+venv/
+.venv/
+env/
+ENV/
+virtualenv/
+.ENV/
+
+
+build/
+dist/
+*.egg-info/
+.eggs/
+
+
+
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE / Editor settings
+# =========================
+.vscode/
+.idea/
+*.iml
+
+
+.DS_Store
+Thumbs.db
+
+# =========================
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Type checking / linters
+.mypy_cache/
+.pyre/
+.pytype/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
