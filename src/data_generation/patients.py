@@ -2,7 +2,7 @@ from faker import Faker
 import random
 import logging
 from mysql.connector import Error
-from src.connection import test_db_connection
+from src.connection import get_connection
 
 logger = logging.getLogger("patients_generator")
 logger.setLevel(logging.INFO)
@@ -19,7 +19,7 @@ def generate_patients(n=1000):
     patient_ids = []
 
     try:
-        conn = test_db_connection()
+        conn = get_connection()
         if not conn:
             logger.error("Database connection failed.")
             return patient_ids

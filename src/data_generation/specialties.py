@@ -1,6 +1,6 @@
 # src/data/specialties.py
 import logging
-from src.connection import test_db_connection
+from src.connection import get_connection
 from mysql.connector import Error
 
 logger = logging.getLogger("specialties_generator")
@@ -19,7 +19,7 @@ def generate_specialties():
         (3, "Emergency", "ER")
     ]
     try:
-        conn = test_db_connection()
+        conn = get_connection()
         if not conn:
             logger.error("Database connection failed.")
             return []

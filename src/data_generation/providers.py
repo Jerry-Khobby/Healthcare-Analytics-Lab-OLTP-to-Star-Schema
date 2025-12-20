@@ -2,7 +2,7 @@
 from faker import Faker
 import random
 import logging
-from src.connection import test_db_connection
+from src.connection import get_connection
 from mysql.connector import Error
 
 logger = logging.getLogger("providers_generator")
@@ -20,7 +20,7 @@ def generate_providers(n=100):
     provider_ids = []
 
     try:
-        conn = test_db_connection()
+        conn = get_connection()
         if not conn:
             logger.error("Database connection failed.")
             return provider_ids

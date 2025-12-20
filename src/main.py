@@ -1,5 +1,5 @@
 import logging
-from src.data import (
+from src.data_generation import (
     patients,
     specialties,
     departments,
@@ -11,6 +11,7 @@ from src.data import (
     encounter_procedures,
     billing
 )
+from src.config import *  
 
 # Configure main logger
 logger = logging.getLogger("data_orchestrator")

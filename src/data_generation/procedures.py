@@ -1,37 +1,37 @@
-# src/data/diagnoses.py
+# src/data/procedures.py
 import logging
-from src.connection import test_db_connection
+from src.connection import get_connection
 from mysql.connector import Error
 
-logger = logging.getLogger("diagnoses_generator")
+logger = logging.getLogger("procedures_generator")
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-def generate_diagnoses():
+def generate_procedures():
     conn = None
     cur = None
-    diagnoses = [
-        (3001, "I10", "Hypertension"),
-        (3002, "E11.9", "Type 2 Diabetes"),
-        (3003, "I50.9", "Heart Failure")
+    procedures = [
+        (4001, "99213", "Office Visit"),
+        (4002, "93000", "EKG"),
+        (4003, "71020", "Chest X-ray")
     ]
     try:
-        conn = test_db_connection()
+        conn = get_connection()
         if not conn:
             logger.error("Database connection failed.")
             return []
 
         cur = conn.cursor()
         cur.executemany(
-            "INSERT INTO diagnoses (diagnosis_id, icd10_code, icd10_description) VALUES (%s, %s, %s)",
-            diagnoses
+            "INSERT INTO procedures (procedure_id, cpt_code, cpt_description) VALUES (%s, %s, %s)",
+            procedures
         )
         conn.commit()
-        logger.info(f"Inserted {len(diagnoses)} diagnoses.")
-        return [d[0] for d in diagnoses]
+        logger.info(f"Inserted {len(procedures)} procedures.")
+        return [p[0] for p in procedures]
 
     except Error as e:
         logger.error(f"MySQL error: {e}")

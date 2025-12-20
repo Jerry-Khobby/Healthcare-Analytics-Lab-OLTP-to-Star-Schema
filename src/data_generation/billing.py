@@ -2,7 +2,7 @@
 import random
 import logging
 from datetime import date, timedelta
-from src.connection import test_db_connection
+from src.connection import get_connection
 from mysql.connector import Error
 
 logger = logging.getLogger("billing_generator")
@@ -18,7 +18,7 @@ def generate_billing(encounter_ids, n_per_encounter=1):
     billing_ids = []
 
     try:
-        conn = test_db_connection()
+        conn = get_connection()
         if not conn:
             logger.error("Database connection failed.")
             return billing_ids

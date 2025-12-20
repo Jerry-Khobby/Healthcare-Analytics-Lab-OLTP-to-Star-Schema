@@ -1,7 +1,7 @@
 # src/data/encounter_diagnoses.py
 import random
 import logging
-from src.connection import test_db_connection
+from src.connection import get_connection
 from mysql.connector import Error
 
 logger = logging.getLogger("encounter_diagnoses_generator")
@@ -17,7 +17,7 @@ def generate_encounter_diagnoses(encounter_ids, diagnosis_ids):
     enc_diag_ids = []
 
     try:
-        conn = test_db_connection()
+        conn = get_connection()
         if not conn:
             logger.error("Database connection failed.")
             return enc_diag_ids

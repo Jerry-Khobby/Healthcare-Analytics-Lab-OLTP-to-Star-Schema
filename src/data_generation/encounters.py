@@ -2,7 +2,7 @@
 from faker import Faker
 import random
 import logging
-from src.connection import test_db_connection
+from src.connection import get_connection
 from mysql.connector import Error
 from datetime import datetime, timedelta
 
@@ -21,7 +21,7 @@ def generate_encounters(patient_ids, provider_ids, n=1000):
     encounter_ids = []
 
     try:
-        conn = test_db_connection()
+        conn = get_connection()
         if not conn:
             logger.error("Database connection failed.")
             return encounter_ids

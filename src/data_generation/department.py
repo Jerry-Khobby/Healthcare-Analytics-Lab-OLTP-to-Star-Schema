@@ -1,6 +1,6 @@
 # src/data/departments.py
 import logging
-from src.connection import test_db_connection
+from src.connection import get_connection
 from mysql.connector import Error
 
 logger = logging.getLogger("departments_generator")
@@ -19,7 +19,7 @@ def generate_departments():
         (3, "Emergency", 1, 45)
     ]
     try:
-        conn = test_db_connection()
+        conn = get_connection()
         if not conn:
             logger.error("Database connection failed.")
             return []
