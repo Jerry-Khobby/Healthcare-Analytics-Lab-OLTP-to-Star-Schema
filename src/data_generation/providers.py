@@ -3,7 +3,7 @@ from faker import Faker
 import random
 import logging
 from src.connection import get_connection
-from mysql.connector import Error
+from pymysql import Error  
 
 logger = logging.getLogger("providers_generator")
 logger.setLevel(logging.INFO)
@@ -14,7 +14,7 @@ logger.addHandler(handler)
 
 fake = Faker()
 
-def generate_providers(n=100):
+def generate_providers(n=150):
     conn = None
     cur = None
     provider_ids = []
@@ -32,8 +32,8 @@ def generate_providers(n=100):
                 fake.first_name(),
                 fake.last_name(),
                 random.choice(["MD", "DO", "RN", "PA"]),
-                random.randint(1, 3),  # specialty_id
-                random.randint(1, 3)   # department_id
+                random.randint(1, 10),  # specialty_id
+                random.randint(1, 6)   # department_id
             ) for i in range(101, 101+n)
         ]
         cur.executemany(
@@ -48,7 +48,9 @@ def generate_providers(n=100):
     except Error as e:
         logger.error(f"MySQL error: {e}")
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected(): conn.close()
+        if cur: 
+            cur.close()
+        if conn: 
+            conn.close()
 
     return provider_ids

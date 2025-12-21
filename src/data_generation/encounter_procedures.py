@@ -3,7 +3,7 @@ from faker import Faker
 import random
 import logging
 from src.connection import get_connection
-from mysql.connector import Error
+from pymysql import Error  
 from datetime import date, timedelta
 
 logger = logging.getLogger("encounter_procedures_generator")
@@ -45,7 +45,9 @@ def generate_encounter_procedures(encounter_ids, procedure_ids):
     except Error as e:
         logger.error(f"MySQL error: {e}")
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected(): conn.close()
+        if cur: 
+            cur.close()
+        if conn:
+            conn.close()
 
     return enc_proc_ids

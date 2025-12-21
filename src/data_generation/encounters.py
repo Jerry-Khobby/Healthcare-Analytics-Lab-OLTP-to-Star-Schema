@@ -3,7 +3,7 @@ from faker import Faker
 import random
 import logging
 from src.connection import get_connection
-from mysql.connector import Error
+from pymysql import Error  
 from datetime import datetime, timedelta
 
 logger = logging.getLogger("encounters_generator")
@@ -49,7 +49,9 @@ def generate_encounters(patient_ids, provider_ids, n=1000):
     except Error as e:
         logger.error(f"MySQL error: {e}")
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected(): conn.close()
+        if cur: 
+            cur.close()
+        if conn:
+            conn.close()
 
     return encounter_ids

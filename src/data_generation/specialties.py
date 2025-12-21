@@ -1,7 +1,7 @@
 # src/data/specialties.py
 import logging
 from src.connection import get_connection
-from mysql.connector import Error
+from pymysql import Error  
 
 logger = logging.getLogger("specialties_generator")
 logger.setLevel(logging.INFO)
@@ -16,7 +16,14 @@ def generate_specialties():
     specialties = [
         (1, "Cardiology", "CARD"),
         (2, "Internal Medicine", "IM"),
-        (3, "Emergency", "ER")
+        (3, "Emergency", "ER"),
+    (4, "Family Medicine", "FM"),
+    (5, "Neurology", "NEURO"),
+    (6, "Orthopedics", "ORTHO"),
+    (7, "Pediatrics", "PEDS"),
+    (8, "Oncology", "ONC"),
+    (9, "Radiology", "RAD"),
+    (10, "General Surgery", "GS")
     ]
     try:
         conn = get_connection()
@@ -37,5 +44,7 @@ def generate_specialties():
         logger.error(f"MySQL error: {e}")
         return []
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected(): conn.close()
+        if cur: 
+            cur.close()
+        if conn: 
+            conn.close()

@@ -3,7 +3,7 @@ import random
 import logging
 from datetime import date, timedelta
 from src.connection import get_connection
-from mysql.connector import Error
+from pymysql import Error  
 
 logger = logging.getLogger("billing_generator")
 logger.setLevel(logging.INFO)
@@ -48,7 +48,9 @@ def generate_billing(encounter_ids, n_per_encounter=1):
     except Error as e:
         logger.error(f"MySQL error: {e}")
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected(): conn.close()
+        if cur: 
+            cur.close()
+        if conn:
+            conn.close()
 
     return billing_ids

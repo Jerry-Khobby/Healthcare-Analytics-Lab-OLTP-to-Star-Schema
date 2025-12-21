@@ -1,7 +1,7 @@
 # src/data/diagnoses.py
 import logging
 from src.connection import get_connection
-from mysql.connector import Error
+from pymysql import Error  
 
 logger = logging.getLogger("diagnoses_generator")
 logger.setLevel(logging.INFO)
@@ -16,7 +16,14 @@ def generate_diagnoses():
     diagnoses = [
         (3001, "I10", "Hypertension"),
         (3002, "E11.9", "Type 2 Diabetes"),
-        (3003, "I50.9", "Heart Failure")
+        (3003, "I50.9", "Heart Failure"),
+            (3004, "J45.909", "Asthma"),
+    (3005, "N18.9", "Chronic Kidney Disease"),
+    (3006, "E78.5", "Hyperlipidemia"),
+    (3007, "I25.10", "Coronary Artery Disease"),
+    (3008, "J18.9", "Pneumonia"),
+    (3009, "M54.5", "Low Back Pain"),
+    (3010, "R07.9", "Chest Pain")
     ]
     try:
         conn = get_connection()
@@ -37,5 +44,7 @@ def generate_diagnoses():
         logger.error(f"MySQL error: {e}")
         return []
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected(): conn.close()
+        if cur: 
+            cur.close()
+        if conn:
+            conn.close()

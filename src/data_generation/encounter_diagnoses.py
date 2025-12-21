@@ -2,7 +2,7 @@
 import random
 import logging
 from src.connection import get_connection
-from mysql.connector import Error
+from pymysql import Error  
 
 logger = logging.getLogger("encounter_diagnoses_generator")
 logger.setLevel(logging.INFO)
@@ -41,7 +41,9 @@ def generate_encounter_diagnoses(encounter_ids, diagnosis_ids):
     except Error as e:
         logger.error(f"MySQL error: {e}")
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected(): conn.close()
+        if cur: 
+            cur.close()
+        if conn: 
+            conn.close()
 
     return enc_diag_ids

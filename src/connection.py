@@ -1,5 +1,5 @@
-import mysql.connector
-from mysql.connector import Error
+import pymysql
+from pymysql import Error
 import os
 from dotenv import load_dotenv
 import logging
@@ -16,34 +16,34 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 # Database credentials
-DB_HOST = os.getenv("HOSTNAME")
-DB_USER = os.getenv("USER")
-DB_PASSWORD = os.getenv("PASSWORD")
-DB_NAME = os.getenv("DATABASE")
-DB_PORT = int(os.getenv("PORT", 3306))
+DB_HOST = os.getenv("DB_HOST")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+DB_PORT = int(os.getenv("DB_PORT", 3306))
 DB_TIMEOUT = int(os.getenv("DB_TIMEOUT", 10))
 
 
 def get_connection():
     """Create and return a MySQL connection."""
+    print("Attempting to connect to the database...")
     try:
-        conn = mysql.connector.connect(
+        conn = pymysql.connect(
             host=DB_HOST,
             port=DB_PORT,
             user=DB_USER,
             password=DB_PASSWORD,
             database=DB_NAME,
-            connection_timeout=DB_TIMEOUT
+            connect_timeout=DB_TIMEOUT
         )
-        if conn.is_connected():
-            logger.info(f"Successfully connected to database: {DB_NAME}")
-            return conn
-        else:
-            logger.error("Connection failed without raising an exception.")
-            return None
+        logger.info(f"Successfully connected to database: {DB_NAME}")
+        return conn
 
     except Error as e:
         logger.error(f"Error connecting to MySQL: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"Unexpected error connecting to MySQL: {e}")
         return None
 
 
@@ -80,12 +80,15 @@ def test_db_connection():
 
     except Error as e:
         logger.error(f"MySQL error: {e}")
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected():
+        if cur:
+            cur.close()
+        if conn:
             conn.close()
             logger.info("Database connection closed.")
 
 
 if __name__ == "__main__":
-    get_connection()
+    test_db_connection()

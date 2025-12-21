@@ -1,7 +1,7 @@
 # src/data/departments.py
 import logging
 from src.connection import get_connection
-from mysql.connector import Error
+from pymysql import Error  
 
 logger = logging.getLogger("departments_generator")
 logger.setLevel(logging.INFO)
@@ -16,7 +16,10 @@ def generate_departments():
     departments = [
         (1, "Cardiology Unit", 3, 20),
         (2, "Internal Medicine", 2, 30),
-        (3, "Emergency", 1, 45)
+        (3, "Emergency", 1, 45),
+    (4, "Radiology Department", 1, 15),
+    (5, "Surgical Ward", 4, 25),
+    (6, "Pediatrics Ward", 3, 20)
     ]
     try:
         conn = get_connection()
@@ -26,7 +29,7 @@ def generate_departments():
 
         cur = conn.cursor()
         cur.executemany(
-            "INSERT INTO departments (department_id, department_name, floor, capacity) VALUES (%s, %s, %s, %s)",
+            "INSERT INTO departments  (department_id, department_name, floor, capacity) VALUES (%s, %s, %s, %s)",
             departments
         )
         conn.commit()
@@ -37,5 +40,7 @@ def generate_departments():
         logger.error(f"MySQL error: {e}")
         return []
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected(): conn.close()
+        if cur: 
+            cur.close()
+        if conn:
+            conn.close()

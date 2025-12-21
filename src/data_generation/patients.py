@@ -1,7 +1,7 @@
 from faker import Faker
 import random
 import logging
-from mysql.connector import Error
+from pymysql import Error  
 from src.connection import get_connection
 
 logger = logging.getLogger("patients_generator")
@@ -13,7 +13,7 @@ logger.addHandler(handler)
 
 fake = Faker()
 
-def generate_patients(n=1000):
+def generate_patients(n=10000):
     conn = None
     cur = None
     patient_ids = []
@@ -50,6 +50,8 @@ def generate_patients(n=1000):
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
     finally:
-        if cur: cur.close()
-        if conn and conn.is_connected(): conn.close()
+        if cur: 
+            cur.close()
+        if conn:
+            conn.close()
     return patient_ids
