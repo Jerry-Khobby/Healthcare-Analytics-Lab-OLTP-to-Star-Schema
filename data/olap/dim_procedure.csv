@@ -1,11 +1,10 @@
-cpt_code,description
-99213,Office Visit
-93000,EKG
-71020,Chest X-ray
-80053,Comprehensive Metabolic Panel
-85025,Complete Blood Count
-45378,Colonoscopy
-70450,CT Scan Head
-71045,Portable Chest X-Ray
-36415,Venipuncture
-93010,EKG Interpretation
+1,4001,99213,Office Visit
+2,4002,93000,EKG
+3,4003,71020,Chest X-ray
+4,4004,80053,Comprehensive Metabolic Panel
+5,4005,85025,Complete Blood Count
+6,4006,45378,Colonoscopy
+7,4007,70450,CT Scan Head
+8,4008,71045,Portable Chest X-Ray
+9,4009,36415,Venipuncture
+10,4010,93010,EKG Interpretation

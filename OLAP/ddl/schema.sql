@@ -1,6 +1,3 @@
-Create database if not exists healthcare_olap 
-use healthcare_olap
-
 
 CREATE TABLE if not exists  dim_date (
   date_key INT PRIMARY KEY,

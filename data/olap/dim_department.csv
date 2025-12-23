@@ -1,7 +1,6 @@
-department_id,department_name
-1,Cardiology Unit
-2,Internal Medicine
-3,Emergency
-4,Radiology Department
-5,Surgical Ward
-6,Pediatrics Ward
+1,1,Cardiology Unit
+2,2,Internal Medicine
+3,3,Emergency
+4,4,Radiology Department
+5,5,Surgical Ward
+6,6,Pediatrics Ward

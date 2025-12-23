@@ -1,11 +1,10 @@
-specialty_id,specialty_name
-1,Cardiology
-2,Internal Medicine
-3,Emergency
-4,Family Medicine
-5,Neurology
-6,Orthopedics
-7,Pediatrics
-8,Oncology
-9,Radiology
-10,General Surgery
+1,1,Cardiology
+2,2,Internal Medicine
+3,3,Emergency
+4,4,Family Medicine
+5,5,Neurology
+6,6,Orthopedics
+7,7,Pediatrics
+8,8,Oncology
+9,9,Radiology
+10,10,General Surgery
