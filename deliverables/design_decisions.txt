@@ -10,30 +10,39 @@ One row per encounter
 
 Decision 2:Dimension Tables 
 
-| Dimension          | Attributes                                     |
-| ------------------ | ---------------------------------------------- |
-| dim_date           | date_key, calendar_date, year, month, quarter  |
-| dim_patient        | patient_key, patient_id, gender, age_group     |
-| dim_provider       | provider_key, provider_id, full_name           |
-| dim_specialty      | specialty_key, specialty_id, specialty_name    |
-| dim_department     | department_key, department_id, department_name |
-| dim_encounter_type | encounter_type_key, type_name                  |
-| dim_diagnosis      | diagnosis_key, icd10_code, description         |
-| dim_procedure      | procedure_key, cpt_code, description           |
+| Dimension          | Attributes                                     
+| ------------------ | ------------------------------------------------------------------------------
+| dim_date           | date_key, calendar_date, year, month, quarter  
+| dim_patient        | patient_key, patient_id, gender, age_group,full_name(first_name+last_name),mrn  
+| dim_provider       | provider_key, provider_id, full_name(first_name+last_name),specialty_id,department_id          
+| dim_specialty      | specialty_key, specialty_id, specialty_name    
+| dim_department     | department_key, department_id, department_name
+| dim_encounter_type | encounter_type_key, type_name                  
+| dim_diagnosis      | diagnosis_key, icd10_code, description         
+| dim_procedure      | procedure_key, cpt_code, description           
 
 
 
 Decision 3:
 fact_encounters:
--encounter_count
--procedure_count
--total_allowed_amount
--total_claim_amount
--diagnosis_count
+- encounter_count
 - procedure_count
--length_of_stay
+- total_allowed_amount
+- total_claim_amount
+- diagnosis_count
+- procedure_count
+- length_of_stay
 
 
 Pre-aggregating these metrics helps in avoiding writing of complex joins in queries or multiples joins
-and it helps in writing a faster group by 
+and it helps in writing a faster group by. Metrics are able to be reuse across the queries.
+
+
+Decision 4: Bridges Tables 
+Yes, I made use of bridges table 
+- encounter <-> diagnoses 
+- encounter <-> procedures 
+
+This is because they are have many to many relationship and not forming a bridge relationship out of them will 
+result in row explosion when queried 
 
