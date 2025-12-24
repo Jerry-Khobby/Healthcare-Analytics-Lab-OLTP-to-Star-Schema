@@ -190,3 +190,86 @@ JOIN healthcare_olap.dim_procedure dp
      FROM healthcare_oltp.procedures
      WHERE procedure_id = ep.procedure_id
  );
+
+
+
+-- 1. Load dim_date
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dim_date.csv'
+IGNORE
+INTO TABLE dim_date
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(date_key, calendar_date, year, month, quarter);
+
+-- 2. Load dim_patient
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dim_patient.csv'
+IGNORE
+INTO TABLE dim_patient
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(patient_key, patient_id, full_name, gender, age_group, mrn);
+
+-- 3. Load dim_specialty
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dim_specialty.csv'
+ignore
+INTO TABLE dim_specialty
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(specialty_key, specialty_id, specialty_name);
+
+-- 4. Load dim_department
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dim_department.csv'
+IGNORE
+INTO TABLE dim_department
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(department_key, department_id, department_name);
+
+-- 5. Load dim_encounter_type
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dim_encounter_type.csv'
+IGNORE
+INTO TABLE dim_encounter_type
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(encounter_type_key, type_name);
+
+-- 6. Load dim_diagnosis
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dim_diagnosis.csv'
+IGNORE
+INTO TABLE dim_diagnosis
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(diagnosis_key, icd10_code, description);
+
+-- 7. Load dim_procedure
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dim_procedure.csv'
+IGNORE
+INTO TABLE dim_procedure
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(procedure_key, cpt_code, description);
+
+-- 8. Load fact_encounters
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/fact_encounters.csv'
+REPLACE
+INTO TABLE fact_encounters
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(encounter_key, date_key, patient_key, specialty_key, department_key, encounter_type_key, 
+ encounter_count, total_allowed_amount, total_claim_amount, diagnosis_count, procedure_count, length_of_stay);
+
+-- 9. Load bridge_encounter_diagnoses
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/bridge_encounter_diagnoses.csv'
+IGNORE
+INTO TABLE bridge_encounter_diagnoses
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(encounter_key, diagnosis_key);
+
+-- 10. Load bridge_encounter_procedures
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/bridge_encounter_procedures.csv'
+IGNORE
+INTO TABLE bridge_encounter_procedures
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+(encounter_key, procedure_key);
