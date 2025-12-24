@@ -1,0 +1,159 @@
+QUESTION 1: Monthly Encounters by Specialty 
+SQL QUERY: 
+```
+SELECT
+    d.year,
+    d.month,
+    s.specialty_name,
+    et.type_name AS encounter_type,
+    COUNT(f.encounter_key) AS total_encounters,
+    COUNT(DISTINCT f.patient_key) AS unique_patients
+FROM fact_encounters f
+JOIN dim_date d
+    ON f.date_key = d.date_key
+JOIN dim_specialty s
+    ON f.specialty_key = s.specialty_key
+JOIN dim_encounter_type et
+    ON f.encounter_type_key = et.encounter_type_key
+GROUP BY
+    d.year,
+    d.month,
+    s.specialty_name,
+    et.type_name
+ORDER BY
+    d.year,
+    d.month,
+    s.specialty_name,
+    et.type_name;
+
+
+
+```
+Schema Analysis:
+Tables joined:dim_date,dim_encounter_type,dim_specialty,fact_encounters
+Number of joins:3
+Performance:
+Execution time:146ms
+Estimated row scanned: fact_encounters has 30000
+Bottleneck Identified : 
+This query uses the fact and dimension tables in a star schema to calculate monthly encounters by specialty and encounter type. It joins fact_encounters with three dimension tables (dim_date, dim_specialty, dim_encounter_type) and aggregates the counts. On a 30,000-row dataset, it ran in 146 ms, which is about 1.43× slower than a similar query on the normalized OLTP tables, mainly due to the additional joins in the star schema.
+
+
+QUESTION 2: Top Diagnosis-Procedure Pairs 
+SQL QUERY:
+```
+SELECT
+    d.icd10_code,
+    p.cpt_code,
+    COUNT(f.encounter_key) AS encounter_count
+FROM fact_encounters f
+JOIN bridge_encounter_diagnoses bd
+    ON f.encounter_key = bd.encounter_key
+JOIN bridge_encounter_procedures bp
+    ON f.encounter_key = bp.encounter_key
+JOIN dim_diagnosis d
+    ON bd.diagnosis_key = d.diagnosis_key
+JOIN dim_procedure p
+    ON bp.procedure_key = p.procedure_key
+GROUP BY
+    d.icd10_code,
+    p.cpt_code
+ORDER BY
+    encounter_count DESC;
+
+```
+Schema Analysis: 
+Tables joined:fact_encounters, bridge_encounter_diagnoses, bridge_encounter_procedures, dim_diagnosis, dim_procedure(5)
+Number of joins: 4
+Execution time:150ms
+Performance improvement:The star schema reduces row explosion because fact table has pre-aggregated measures and bridge tables are compact
+
+
+
+QUESTION3: 30-Day Readmission Rate
+SQL Query:
+```
+
+WITH inpatient_encounters AS (
+    SELECT 
+        f.encounter_key,
+        f.patient_key,
+        f.specialty_key,
+        d.calendar_date AS admission_date,
+        DATE_ADD(d.calendar_date, INTERVAL f.length_of_stay DAY) AS discharge_date
+    FROM fact_encounters f
+    JOIN dim_date d ON f.date_key = d.date_key
+    JOIN dim_encounter_type et ON f.encounter_type_key = et.encounter_type_key
+    WHERE et.type_name = 'Inpatient'
+),
+
+readmissions AS (
+    SELECT 
+        a.patient_key,
+        a.specialty_key,
+        a.encounter_key AS first_encounter,
+        b.encounter_key AS readmit_encounter
+    FROM inpatient_encounters a
+    JOIN inpatient_encounters b
+      ON a.patient_key = b.patient_key
+     AND b.admission_date > a.discharge_date
+     AND b.admission_date <= DATE_ADD(a.discharge_date, INTERVAL 30 DAY)
+)
+
+SELECT 
+    s.specialty_name,
+    COUNT(DISTINCT r.readmit_encounter) AS readmissions,
+    COUNT(DISTINCT i.encounter_key) AS total_inpatient_encounters,
+    ROUND(COUNT(DISTINCT r.readmit_encounter) / COUNT(DISTINCT i.encounter_key) * 100, 2) AS readmission_rate_percent
+FROM inpatient_encounters i
+JOIN dim_specialty s ON i.specialty_key = s.specialty_key
+LEFT JOIN readmissions r ON i.encounter_key = r.first_encounter
+GROUP BY s.specialty_name
+ORDER BY readmission_rate_percent DESC;
+
+```
+Schema Analysis:
+Tables joined:fact_encounters, dim_date, dim_encounter_type, dim_specialty
+Number of joins:4
+Performance
+Execution time: 17ms
+Estimated rows scanned: fact_encounters has 30,000
+Performance Improvement: OLAP/star schema is ~6.4x faster than the normalized query (17ms vs 109ms) 
+Because:Pre-joined fact table reduces the need for extra joins with providers.
+Computed discharge date avoids multiple table lookups.
+Fewer intermediate rows in the self-join thanks to dimension keys and compact fact table.
+
+
+QUESTION 4: Revenue by Specialty & Month 
+SQL Query:
+```
+SELECT
+    d.year,
+    d.month,
+    s.specialty_name,
+    SUM(f.total_allowed_amount) AS total_allowed_amount
+FROM fact_encounters f
+JOIN dim_date d
+    ON f.date_key = d.date_key
+JOIN dim_specialty s
+    ON f.specialty_key = s.specialty_key
+GROUP BY
+    d.year,
+    d.month,
+    s.specialty_name
+ORDER BY
+    d.year,
+    d.month,
+    total_allowed_amount DESC;
+```
+
+
+
+Schema Analysis:
+Tables joined:fact_encounters, dim_date, dim_specialty
+Number of joins: 2
+Execution time:114ms 
+Estimated rows scanned: fact_encounters 30,000
+Performance Improvement:
+Compared to the normalized schema, this star schema query is ~1.93x faster (114 ms vs 220 ms).
+The reason: fewer joins and pre-aggregated fact table with surrogate keys in dimensions, reducing intermediate row expansion.

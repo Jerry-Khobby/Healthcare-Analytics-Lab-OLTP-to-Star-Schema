@@ -1,0 +1,53 @@
+# **ETL Design — Healthcare Analytics Lab**
+
+## **Overview**
+
+* Transform data from normalized OLTP schema into star schema for faster analytics.
+* Extract → Transform → Load (ETL) implemented in Python using Pandas.
+* Handles dimensions, fact table, and bridge tables for many-to-many relationships.
+
+---
+
+## **1. Dimension Load**
+* **dim_date**: Extract unique encounter & discharge dates, create `date_key`, derive year, month, quarter. One-time load; update for new dates only.
+* **dim_patient**: Combine first & last name → `full_name`, calculate `age` → `age_group`, assign `patient_key`.
+* **dim_specialty / dim_department / dim_encounter_type**: Assign surrogate keys, load relevant attributes.
+* **dim_diagnosis / dim_procedure**: Rename descriptions, assign surrogate keys.
+
+---
+
+## **2. Fact Table Load (fact_encounters)**
+* Map encounter to all relevant dimension keys (date, patient, specialty, department, encounter type).
+* Pre-aggregate metrics for fast queries:
+
+  * `encounter_count` = 1
+  * `total_allowed_amount`, `total_claim_amount` from billing
+  * `diagnosis_count`, `procedure_count` from bridge tables
+  * `length_of_stay` = `discharge_date - encounter_date`
+* Assign `encounter_key` as surrogate primary key.
+* Fill missing numeric values with `0`.
+
+---
+
+## **3. Bridge Tables**
+
+* **bridge_encounter_diagnoses**: Map encounters → `diagnosis_key` via `dim_diagnosis` and `fact_encounters`.
+* **bridge_encounter_procedures**: Map encounters → `procedure_key` via `dim_procedure` and `fact_encounters`.
+* Enables many-to-many relationships without denormalizing facts.
+
+---
+
+## **4. Refresh Strategy**
+
+* **Initial load**: Full extract of all tables.
+* **Incremental load**: Daily or weekly load of new encounters.
+* Update dimensions first for late-arriving facts, then fact and bridge tables.
+
+---
+
+## **5. Key Benefits**
+
+* Pre-aggregated metrics reduce heavy JOINs in queries.
+* Surrogate keys improve join performance.
+* Star schema structure optimizes reporting for business questions.
+* Bridge tables maintain flexibility for diagnoses and procedures without duplicating data.

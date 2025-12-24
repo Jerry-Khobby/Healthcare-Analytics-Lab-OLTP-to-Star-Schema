@@ -17,7 +17,6 @@ ORDER BY
     month DESC,
     specialty_name,
     encounter_type;
-
 SET @EndTime = NOW(3);
 
 SELECT CONCAT('Execution Time (ms): ', 
