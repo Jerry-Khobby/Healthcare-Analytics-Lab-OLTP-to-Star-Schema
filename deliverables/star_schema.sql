@@ -2,7 +2,9 @@ CREATE DATABASE IF NOT EXISTS HealthCare_Analytics;
 USE HealthCare_Analytics;
 
 
-CREATE TABLE if not exists  dim_date (
+-- Dimension Tables
+
+CREATE TABLE IF NOT EXISTS dim_date (
   date_key INT PRIMARY KEY,
   calendar_date DATE NOT NULL,
   year INT NOT NULL,
@@ -10,46 +12,63 @@ CREATE TABLE if not exists  dim_date (
   quarter INT NOT NULL
 );
 
-CREATE TABLE  if not exists dim_patient (
-  patient_key INT  PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS dim_patient (
+  patient_key INT PRIMARY KEY,
   patient_id INT NOT NULL,
   full_name VARCHAR(100),
   gender CHAR(1),
   age_group VARCHAR(20),
-  mrn VARCHAR(20)
+  mrn VARCHAR(20),
+
+  CONSTRAINT uq_dim_patient_patient_id UNIQUE (patient_id),
+  CONSTRAINT chk_dim_patient_gender
+    CHECK (gender IN ('M','F') OR gender IS NULL)
 );
 
-CREATE TABLE  if not exists dim_specialty (
-  specialty_key INT  PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS dim_specialty (
+  specialty_key INT PRIMARY KEY,
   specialty_id INT NOT NULL,
-  specialty_name VARCHAR(100) NOT NULL
+  specialty_name VARCHAR(100) NOT NULL,
+
+  CONSTRAINT uq_dim_specialty_specialty_id UNIQUE (specialty_id)
 );
 
-CREATE TABLE if not exists dim_department (
-  department_key INT  PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS dim_department (
+  department_key INT PRIMARY KEY,
   department_id INT NOT NULL,
-  department_name VARCHAR(100) NOT NULL
+  department_name VARCHAR(100) NOT NULL,
+
+  CONSTRAINT uq_dim_department_department_id UNIQUE (department_id)
 );
 
-CREATE TABLE if not exists dim_encounter_type (
-  encounter_type_key INT  PRIMARY KEY,
-  type_name VARCHAR(50) NOT NULL
+CREATE TABLE IF NOT EXISTS dim_encounter_type (
+  encounter_type_key INT PRIMARY KEY,
+  type_name VARCHAR(50) NOT NULL,
+
+  CONSTRAINT uq_dim_encounter_type_name UNIQUE (type_name)
 );
 
-CREATE TABLE if not exists  dim_diagnosis (
-  diagnosis_key INT  PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS dim_diagnosis (
+  diagnosis_key INT PRIMARY KEY,
   icd10_code VARCHAR(10) NOT NULL,
-  description VARCHAR(200)
+  description VARCHAR(200),
+
+  CONSTRAINT uq_dim_diagnosis_icd10 UNIQUE (icd10_code)
 );
 
-CREATE TABLE if not exists dim_procedure (
-  procedure_key INT  PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS dim_procedure (
+  procedure_key INT PRIMARY KEY,
   cpt_code VARCHAR(10) NOT NULL,
-  description VARCHAR(200)
+  description VARCHAR(200),
+
+  CONSTRAINT uq_dim_procedure_cpt UNIQUE (cpt_code)
 );
 
-CREATE TABLE if not exists  fact_encounters (
-  encounter_key INT  PRIMARY KEY,
+
+-- Fact Table
+
+CREATE TABLE IF NOT EXISTS fact_encounters (
+  encounter_key INT PRIMARY KEY,
   date_key INT NOT NULL,
   patient_key INT NOT NULL,
   specialty_key INT NOT NULL,
@@ -60,100 +79,79 @@ CREATE TABLE if not exists  fact_encounters (
   total_claim_amount DECIMAL(12,2),
   diagnosis_count INT,
   procedure_count INT,
-  length_of_stay INT
-);
+  length_of_stay INT,
 
-
-
-CREATE TABLE if not exists bridge_encounter_diagnoses (
-  encounter_key INT NOT NULL,
-  diagnosis_key INT NOT NULL
-);
-
-CREATE TABLE if not exists bridge_encounter_procedures (
-  encounter_key INT NOT NULL,
-  procedure_key INT NOT NULL
-);
-
-
-
-ALTER TABLE dim_patient
-  ADD CONSTRAINT uq_dim_patient_patient_id UNIQUE (patient_id),
-  ADD CONSTRAINT chk_dim_patient_gender
-    CHECK (gender IN ('M','F') OR gender IS NULL);
-ALTER TABLE dim_specialty
-  ADD CONSTRAINT uq_dim_specialty_specialty_id UNIQUE (specialty_id);
-ALTER TABLE dim_department
-  ADD CONSTRAINT uq_dim_department_department_id UNIQUE (department_id);
-ALTER TABLE dim_encounter_type
-  ADD CONSTRAINT uq_dim_encounter_type_name UNIQUE (type_name);
-ALTER TABLE dim_diagnosis
-  ADD CONSTRAINT uq_dim_diagnosis_icd10 UNIQUE (icd10_code);
-ALTER TABLE dim_procedure
-  ADD CONSTRAINT uq_dim_procedure_cpt UNIQUE (cpt_code);
-ALTER TABLE fact_encounters
-  ADD CONSTRAINT fk_fact_date
+  CONSTRAINT fk_fact_date
     FOREIGN KEY (date_key)
     REFERENCES dim_date(date_key),
 
-  ADD CONSTRAINT fk_fact_patient
+  CONSTRAINT fk_fact_patient
     FOREIGN KEY (patient_key)
     REFERENCES dim_patient(patient_key),
 
-  ADD CONSTRAINT fk_fact_specialty
+  CONSTRAINT fk_fact_specialty
     FOREIGN KEY (specialty_key)
     REFERENCES dim_specialty(specialty_key),
 
-  ADD CONSTRAINT fk_fact_department
+  CONSTRAINT fk_fact_department
     FOREIGN KEY (department_key)
     REFERENCES dim_department(department_key),
 
-  ADD CONSTRAINT fk_fact_encounter_type
+  CONSTRAINT fk_fact_encounter_type
     FOREIGN KEY (encounter_type_key)
-    REFERENCES dim_encounter_type(encounter_type_key);
+    REFERENCES dim_encounter_type(encounter_type_key),
 
-
-ALTER TABLE fact_encounters
-  ADD CONSTRAINT chk_fact_encounter_count
+  CONSTRAINT chk_fact_encounter_count
     CHECK (encounter_count = 1),
 
-  ADD CONSTRAINT chk_fact_non_negative_amounts
+  CONSTRAINT chk_fact_non_negative_amounts
     CHECK (
       total_allowed_amount >= 0
       AND total_claim_amount >= 0
     ),
 
-  ADD CONSTRAINT chk_fact_non_negative_counts
+  CONSTRAINT chk_fact_non_negative_counts
     CHECK (
       diagnosis_count >= 0
       AND procedure_count >= 0
-    );
+    )
+);
 
 
-ALTER TABLE bridge_encounter_diagnoses
-  ADD CONSTRAINT pk_bridge_encounter_diagnoses
+-- Bridge Tables
+
+CREATE TABLE IF NOT EXISTS bridge_encounter_diagnoses (
+  encounter_key INT NOT NULL,
+  diagnosis_key INT NOT NULL,
+
+  CONSTRAINT pk_bridge_encounter_diagnoses
     PRIMARY KEY (encounter_key, diagnosis_key),
 
-  ADD CONSTRAINT fk_bridge_diag_encounter
+  CONSTRAINT fk_bridge_diag_encounter
     FOREIGN KEY (encounter_key)
     REFERENCES fact_encounters(encounter_key),
 
-  ADD CONSTRAINT fk_bridge_diag_diagnosis
+  CONSTRAINT fk_bridge_diag_diagnosis
     FOREIGN KEY (diagnosis_key)
-    REFERENCES dim_diagnosis(diagnosis_key);
+    REFERENCES dim_diagnosis(diagnosis_key)
+);
 
+CREATE TABLE IF NOT EXISTS bridge_encounter_procedures (
+  encounter_key INT NOT NULL,
+  procedure_key INT NOT NULL,
 
-ALTER TABLE bridge_encounter_procedures
-  ADD CONSTRAINT pk_bridge_encounter_procedures
+  CONSTRAINT pk_bridge_encounter_procedures
     PRIMARY KEY (encounter_key, procedure_key),
 
-  ADD CONSTRAINT fk_bridge_proc_encounter
+  CONSTRAINT fk_bridge_proc_encounter
     FOREIGN KEY (encounter_key)
     REFERENCES fact_encounters(encounter_key),
 
-  ADD CONSTRAINT fk_bridge_proc_procedure
+  CONSTRAINT fk_bridge_proc_procedure
     FOREIGN KEY (procedure_key)
-    REFERENCES dim_procedure(procedure_key);
+    REFERENCES dim_procedure(procedure_key)
+);
+
 
 
 

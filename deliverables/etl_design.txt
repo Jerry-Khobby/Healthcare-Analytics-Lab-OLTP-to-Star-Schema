@@ -1,6 +1,6 @@
-# **ETL Design — Healthcare Analytics Lab**
+ETL Design — Healthcare Analytics Lab**
 
-## **Overview**
+Overview
 
 * Transform data from normalized OLTP schema into star schema for faster analytics.
 * Extract → Transform → Load (ETL) implemented in Python using Pandas.
@@ -8,7 +8,7 @@
 
 ---
 
-## **1. Dimension Load**
+1. Dimension Load
 * **dim_date**: Extract unique encounter & discharge dates, create `date_key`, derive year, month, quarter. One-time load; update for new dates only.
 * **dim_patient**: Combine first & last name → `full_name`, calculate `age` → `age_group`, assign `patient_key`.
 * **dim_specialty / dim_department / dim_encounter_type**: Assign surrogate keys, load relevant attributes.
@@ -16,7 +16,7 @@
 
 ---
 
-## **2. Fact Table Load (fact_encounters)**
+2. Fact Table Load (fact_encounters)
 * Map encounter to all relevant dimension keys (date, patient, specialty, department, encounter type).
 * Pre-aggregate metrics for fast queries:
 
@@ -29,7 +29,7 @@
 
 ---
 
-## **3. Bridge Tables**
+3. Bridge Tables**
 
 * **bridge_encounter_diagnoses**: Map encounters → `diagnosis_key` via `dim_diagnosis` and `fact_encounters`.
 * **bridge_encounter_procedures**: Map encounters → `procedure_key` via `dim_procedure` and `fact_encounters`.
@@ -37,15 +37,14 @@
 
 ---
 
-## **4. Refresh Strategy**
+4. Refresh Strategy**
 
 * **Initial load**: Full extract of all tables.
 * **Incremental load**: Daily or weekly load of new encounters.
 * Update dimensions first for late-arriving facts, then fact and bridge tables.
 
 ---
-
-## **5. Key Benefits**
+5. Key Benefits**
 
 * Pre-aggregated metrics reduce heavy JOINs in queries.
 * Surrogate keys improve join performance.
