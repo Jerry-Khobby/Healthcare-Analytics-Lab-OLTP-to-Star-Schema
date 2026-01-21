@@ -119,7 +119,6 @@ CREATE TABLE IF NOT EXISTS fact_encounters (
 
 
 -- Bridge Tables
-
 CREATE TABLE IF NOT EXISTS bridge_encounter_diagnoses (
   encounter_key INT NOT NULL,
   diagnosis_key INT NOT NULL,
@@ -157,6 +156,8 @@ CREATE TABLE IF NOT EXISTS bridge_encounter_procedures (
 
 
 
+
+----Insert Data ------
 -- 1. Load dim_date
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dim_date.csv'
 IGNORE

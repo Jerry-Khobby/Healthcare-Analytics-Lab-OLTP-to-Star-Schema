@@ -1,5 +1,6 @@
 SET @StartTime = NOW(3);
 
+
 SELECT 
     d.icd10_code AS ICD,
     p.cpt_code AS Procedure_Code,
@@ -16,5 +17,5 @@ ORDER BY Encounter_Count DESC;  -- optional, for top pairs
 
 SET @EndTime = NOW(3);
 
-SELECT CONCAT('Execution Time (ms): ', 
-              TIMESTAMPDIFF(MICROSECOND, @StartTime, @EndTime)/1000) AS ExecutionTime_ms;
+-- Compute execution time in milliseconds
+SELECT TIMESTAMPDIFF(MICROSECOND, @StartTime, @EndTime)/1000 AS ExecutionTime_ms;

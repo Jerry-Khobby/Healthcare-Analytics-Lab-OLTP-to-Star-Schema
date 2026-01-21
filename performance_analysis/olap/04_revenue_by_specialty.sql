@@ -1,5 +1,5 @@
--- Revenue by Specialty & Month
 SET @StartTime = NOW(3);
+
 SELECT
     d.year,
     d.month,
@@ -20,6 +20,5 @@ ORDER BY
     total_allowed_amount DESC;
 
 SET @EndTime = NOW(3);
-
-SELECT CONCAT('Execution Time (ms): ', 
-              TIMESTAMPDIFF(MICROSECOND, @StartTime, @EndTime)/1000) AS ExecutionTime_ms;
+-- Compute execution time in milliseconds
+SELECT TIMESTAMPDIFF(MICROSECOND, @StartTime, @EndTime)/1000 AS ExecutionTime_ms;

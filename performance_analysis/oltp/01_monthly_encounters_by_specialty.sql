@@ -17,7 +17,9 @@ ORDER BY
     month DESC,
     specialty_name,
     encounter_type;
+
+
 SET @EndTime = NOW(3);
 
-SELECT CONCAT('Execution Time (ms): ', 
-              TIMESTAMPDIFF(MICROSECOND, @StartTime, @EndTime)/1000) AS ExecutionTime_ms;
+-- Compute execution time in milliseconds
+SELECT TIMESTAMPDIFF(MICROSECOND, @StartTime, @EndTime)/1000 AS ExecutionTime_ms;

@@ -1,5 +1,6 @@
 SET @StartTime = NOW(3);
 
+
 SELECT 
     s.specialty_name,
     COUNT(*) AS readmission_count
@@ -21,5 +22,5 @@ ORDER BY readmission_count DESC;
 
 SET @EndTime = NOW(3);
 
-SELECT CONCAT('Execution Time (ms): ', 
-              TIMESTAMPDIFF(MICROSECOND, @StartTime, @EndTime)/1000) AS ExecutionTime_ms;
+-- Compute execution time in milliseconds
+SELECT TIMESTAMPDIFF(MICROSECOND, @StartTime, @EndTime)/1000 AS ExecutionTime_ms;
