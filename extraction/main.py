@@ -18,7 +18,7 @@ from src.data_generation import (
     encounter_procedures,
     billing
 )
-from src.config.scales import * 
+from extraction.config.scales import * 
 
 # Create logs directory if it doesn't exist
 log_dir = Path(__file__).parent.parent / "logs"

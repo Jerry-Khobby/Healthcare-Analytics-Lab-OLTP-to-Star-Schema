@@ -244,7 +244,7 @@ The **same analytical questions** were asked on both schemas:
 
 ---
 
-## ⚖️ Trade-offs
+##  Trade-offs
 
 ### Gains
 
@@ -285,7 +285,7 @@ This mirrors real-world data warehouse design patterns used in hospitals, insura
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 * Python
 * Pandas

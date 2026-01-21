@@ -1,11 +1,10 @@
-# src/data/providers.py
 from faker import Faker
 import random
 import logging
-from src.connection import get_connection
 from pymysql import Error  
+from extraction.connection import get_connection
 
-logger = logging.getLogger("providers_generator")
+logger = logging.getLogger("patients_generator")
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
@@ -14,43 +13,45 @@ logger.addHandler(handler)
 
 fake = Faker()
 
-def generate_providers(n=150):
+def generate_patients(n=10000):
     conn = None
     cur = None
-    provider_ids = []
+    patient_ids = []
 
     try:
         conn = get_connection()
         if not conn:
             logger.error("Database connection failed.")
-            return provider_ids
+            return patient_ids
 
         cur = conn.cursor()
-        providers = [
+        patients = [
             (
                 i,
                 fake.first_name(),
                 fake.last_name(),
-                random.choice(["MD", "DO", "RN", "PA"]),
-                random.randint(1, 10),  # specialty_id
-                random.randint(1, 6)   # department_id
-            ) for i in range(101, 101+n)
+                fake.date_of_birth(minimum_age=0, maximum_age=100),
+                random.choice(["M", "F"]),
+                f"MRN{i:06d}"
+            )
+            for i in range(1, n+1)
         ]
+
         cur.executemany(
-            "INSERT INTO providers (provider_id, first_name, last_name, credential, specialty_id, department_id) "
-            "VALUES (%s, %s, %s, %s, %s, %s)",
-            providers
+            "INSERT INTO patients (patient_id, first_name, last_name, date_of_birth, gender, mrn) "
+            "VALUES (%s, %s, %s, %s, %s, %s)", patients
         )
         conn.commit()
-        provider_ids = [p[0] for p in providers]
-        logger.info(f"Inserted {len(provider_ids)} providers.")
+        patient_ids = [p[0] for p in patients]
+        logger.info(f"Inserted {len(patient_ids)} patients successfully.")
 
     except Error as e:
         logger.error(f"MySQL error: {e}")
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
     finally:
         if cur: 
             cur.close()
-        if conn: 
+        if conn:
             conn.close()
-
-    return provider_ids
+    return patient_ids

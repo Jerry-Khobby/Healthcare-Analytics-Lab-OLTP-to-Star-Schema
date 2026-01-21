@@ -193,6 +193,8 @@ JOIN healthcare_olap.dim_procedure dp
 
 
 
+---- using files 
+
 -- 1. Load dim_date
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/dim_date.csv'
 IGNORE

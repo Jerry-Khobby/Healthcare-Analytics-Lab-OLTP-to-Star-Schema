@@ -148,7 +148,6 @@ ORDER BY
 ```
 
 
-
 Schema Analysis:
 Tables joined:fact_encounters, dim_date, dim_specialty
 Number of joins: 2

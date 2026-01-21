@@ -1,6 +1,6 @@
 # src/data/diagnoses.py
 import logging
-from src.connection import get_connection
+from extraction.connection import get_connection
 from pymysql import Error  
 
 logger = logging.getLogger("diagnoses_generator")

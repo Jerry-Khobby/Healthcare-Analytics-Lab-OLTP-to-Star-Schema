@@ -1,6 +1,6 @@
 # src/data/specialties.py
 import logging
-from src.connection import get_connection
+from extraction.connection import get_connection
 from pymysql import Error  
 
 logger = logging.getLogger("specialties_generator")

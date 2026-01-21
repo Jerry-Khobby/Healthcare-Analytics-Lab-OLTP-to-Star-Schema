@@ -1,7 +1,7 @@
 # src/data/encounter_diagnoses.py
 import random
 import logging
-from src.connection import get_connection
+from extraction.connection import get_connection
 from pymysql import Error  
 
 logger = logging.getLogger("encounter_diagnoses_generator")

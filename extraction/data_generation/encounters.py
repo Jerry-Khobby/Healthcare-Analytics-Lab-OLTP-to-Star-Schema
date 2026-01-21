@@ -2,7 +2,7 @@
 from faker import Faker
 import random
 import logging
-from src.connection import get_connection
+from extraction.connection import get_connection
 from pymysql import Error  
 from datetime import datetime, timedelta
 
