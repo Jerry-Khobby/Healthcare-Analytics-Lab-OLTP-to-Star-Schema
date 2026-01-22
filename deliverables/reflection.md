@@ -82,7 +82,6 @@ In production, bridge tables are preferable for large datasets because they prev
 ---
 
 ## **Performance Quantification**
-
 **Query 1: Monthly Encounters by Specialty**
 
 * OLTP: 293 ms
@@ -116,5 +115,8 @@ In production, bridge tables are preferable for large datasets because they prev
 The star schema provides significant performance advantages for analytical queries by pre-computing metrics and reducing join complexity. While it introduces ETL complexity and some data duplication, the benefits in speed, scalability, and simplicity for business intelligence far outweigh these costs. Bridge tables efficiently handle many-to-many relationships, providing a scalable solution without inflating the fact table.
 
 Overall, the star schema is the ideal structure for OLAP workloads in healthcare analytics, particularly as datasets grow into millions of rows.
-
-
+“Even though the OLAP queries sometimes contain more joins than the OLTP version, the performance is better because:
+Joins are on surrogate keys (integers), which are faster than business or composite keys.
+The fact table is denormalized, storing all foreign keys and pre-aggregated metrics, reducing intermediate row explosion.
+Bridge tables for many-to-many relationships are compact, avoiding the multiplication of rows seen in OLTP.
+OLTP joins often involve multiple normalized tables and recomputation of aggregates, which is slower, whereas OLAP queries can aggregate directly from precomputed fact table columns.”

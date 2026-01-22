@@ -1,6 +1,4 @@
-
 #  Healthcare Analytics Lab: OLTP vs OLAP Performance Comparison
-
 ##  Project Overview
 
 This project demonstrates the **performance differences between OLTP (Online Transaction Processing)** and **OLAP (Online Analytical Processing)** systems using a **Healthcare Analytics use case**.
@@ -27,7 +25,7 @@ This project empirically proves why **OLAP star schemas** are better suited for 
 
 ---
 
-##  Architecture Overview
+## Architecture Overview
 
 ### Phase 1: OLTP System
 
@@ -41,11 +39,9 @@ This project empirically proves why **OLAP star schemas** are better suited for 
 * Pre-aggregated metrics
 * Surrogate keys
 * Optimized for analytical queries
-
 ---
 
 ##  Project Structure
-
 ```
 Healthcare-Analytics-Lab-OLTP-to-Star-Schema/
 │

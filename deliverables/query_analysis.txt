@@ -1,8 +1,6 @@
 QUESTION 1: Monthly Encounters by Specialty
-
 SQL Query:
-
-```
+``
 SELECT 
     DATE_FORMAT(e.encounter_date, '%Y-%m') AS month,
     s.specialty_name,
