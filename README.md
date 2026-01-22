@@ -213,10 +213,10 @@ The **same analytical questions** were asked on both schemas:
 
 | Query                     | OLTP Time | OLAP Time | Improvement                       |
 | ------------------------- | --------- | --------- | --------------------------------- |
-| Monthly Encounters        | 102 ms    | 146 ms    | OLTP slightly faster (small data) |
-| Diagnosis–Procedure Pairs | 462 ms    | 150 ms    | ~3× faster                        |
-| 30-Day Readmission        | 109 ms    | 17 ms     | **~6.4× faster**                  |
-| Revenue by Specialty      | 220 ms    | 114 ms    | ~1.9× faster                      |
+| Monthly Encounters        | 293 ms    | 248 ms    | OLAP faster |
+| Diagnosis–Procedure Pairs | 444 ms    | 241 ms    | ~1.84× faster                        |
+| 30-Day Readmission        | 128 ms    | 247 ms     | **~6.4× faster**                  |
+| Revenue by Specialty      | 327 ms    | 178 ms    | ~1.84× faster                      |
 
 ---
 
